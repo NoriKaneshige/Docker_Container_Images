@@ -37,7 +37,8 @@ IMAGE               CREATED             CREATED BY                              
 <missing>           3 weeks ago         /bin/sh -c #(nop)  CMD ["bash"]                 0B
 <missing>           3 weeks ago         /bin/sh -c #(nop) ADD file:9b8be2b52ee0fa31d…   69.2MB
 ```
-
+## Look at the history of mysql, which is completely different set of image layers
+```
 Koitaro@MacBook-Pro-3 ~ % docker history mysql
 IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
 a0d4d95e478f        41 hours ago        /bin/sh -c #(nop)  CMD ["mysqld"]               0B
@@ -60,3 +61,5 @@ a0d4d95e478f        41 hours ago        /bin/sh -c #(nop)  CMD ["mysqld"]       
 <missing>           41 hours ago        /bin/sh -c groupadd -r mysql && useradd -r -…   329kB
 <missing>           47 hours ago        /bin/sh -c #(nop)  CMD ["bash"]                 0B
 <missing>           47 hours ago        /bin/sh -c #(nop) ADD file:ca8f84daab6688a5d…   69.2MB
+```
+
