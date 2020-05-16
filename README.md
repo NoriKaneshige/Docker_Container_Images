@@ -190,4 +190,166 @@ Koitaro@MacBook-Pro-3 ~ % docker image inspect nginx
 ]
 
 ```
+## Image Tagging and Pushing to Docker Hub
+## Tags are new lables for the same image ID
+```
+Koitaro@MacBook-Pro-3 ~ % docker pull mysql/mysql-server
+Using default tag: latest
+latest: Pulling from mysql/mysql-server
+0e690826fc6e: Pull complete
+0e6c49086d52: Pull complete
+862ba7a26325: Pull complete
+7731c802ed08: Pull complete
+Digest: sha256:a82ff720911b2fd40a425fd7141f75d7c68fb9815ec3e5a5a881a8eb49677087
+Status: Downloaded newer image for mysql/mysql-server:latest
+docker.io/mysql/mysql-server:latest
+
+Koitaro@MacBook-Pro-3 ~ % docker image ls
+REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+mysql/mysql-server   latest              716286be47c6        2 weeks ago         381MB
+
+Koitaro@MacBook-Pro-3 ~ % docker pull nginx:mainline
+mainline: Pulling from library/nginx
+Digest: sha256:f938e7389670418efee4d5a8748600d9ec705170957774d25d4ec73bdbe004e2
+Status: Image is up to date for nginx:mainline
+docker.io/library/nginx:mainline
+
+Koitaro@MacBook-Pro-3 ~ % docker image ls
+REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+nginx                mainline            9beeba249f3e        About an hour ago   127MB
+mysql                latest              a0d4d95e478f        42 hours ago        541MB
+httpd                latest              a8a9cbaadb0c        46 hours ago        166MB
+```
+## we can also re-tag existing image
+## we have a new tag in an existing image. This doesn't exist in my docker hub yet.
+```
+Koitaro@MacBook-Pro-3 ~ % docker image tag --help
+
+Usage:	docker image tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+
+Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+Koitaro@MacBook-Pro-3 ~ % docker image tag nginx bretfisher/nginx
+
+Koitaro@MacBook-Pro-3 ~ % docker image ls
+REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+bretfisher/nginx     latest              602e111c06b6        3 weeks ago         127MB
+nginx                latest              602e111c06b6        3 weeks ago         127MB
+```
+## let's try to push
+```
+Koitaro@MacBook-Pro-3 ~ % docker image push bretfisher/nginx
+The push refers to repository [docker.io/bretfisher/nginx]
+b3003aac411c: Preparing
+216cf33c0a28: Preparing
+c2adabaecedb: Preparing
+denied: requested access to the resource is denied
+
+Koitaro@MacBook-Pro-3 ~ % docker login
+Authenticating with existing credentials...
+Login Succeeded
+```
+## Building Images: The Dockerfile Basics
+## Below is the basic dockerfile. The instruction of how we build the image
+```
+# NOTE: this example is taken from the default Dockerfile for the official nginx Docker Hub Repo
+# https://hub.docker.com/_/nginx/
+# NOTE: This file is slightly different than the video, because nginx versions have been updated 
+#       to match the latest standards from docker hub... but it's doing the same thing as the video
+#       describes
+FROM debian:stretch-slim
+# all images must have a FROM
+# usually from a minimal Linux distribution like debian or (even better) alpine
+# if you truly want to start with an empty container, use FROM scratch
+
+ENV NGINX_VERSION 1.13.6-1~stretch
+ENV NJS_VERSION   1.13.6.0.1.14-1~stretch
+# optional environment variable that's used in later lines and set as envvar when container is running
+
+RUN apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y gnupg1 \
+	&& \
+	NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; \
+	found=''; \
+	for server in \
+		ha.pool.sks-keyservers.net \
+		hkp://keyserver.ubuntu.com:80 \
+		hkp://p80.pool.sks-keyservers.net:80 \
+		pgp.mit.edu \
+	; do \
+		echo "Fetching GPG key $NGINX_GPGKEY from $server"; \
+		apt-key adv --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$NGINX_GPGKEY" && found=yes && break; \
+	done; \
+	test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
+	apt-get remove --purge -y gnupg1 && apt-get -y --purge autoremove && rm -rf /var/lib/apt/lists/* \
+	&& echo "deb http://nginx.org/packages/mainline/debian/ stretch nginx" >> /etc/apt/sources.list \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+						nginx=${NGINX_VERSION} \
+						nginx-module-xslt=${NGINX_VERSION} \
+						nginx-module-geoip=${NGINX_VERSION} \
+						nginx-module-image-filter=${NGINX_VERSION} \
+						nginx-module-njs=${NJS_VERSION} \
+						gettext-base \
+	&& rm -rf /var/lib/apt/lists/*
+# optional commands to run at shell inside container at build time
+# this one adds package repo for nginx from nginx.org and installs it
+
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log
+# forward request and error logs to docker log collector
+
+EXPOSE 80 443
+# expose these ports on the docker virtual network
+# you still need to use -p or -P to open/forward these ports on host
+
+CMD ["nginx", "-g", "daemon off;"]
+# required: run this command when container is launched
+# only one CMD allowed, so if there are multiple, last one wins
+```
+
+```
+Koitaro@MacBook-Pro-3 udemy-docker-mastery % cd dockerfile-sample-1
+Koitaro@MacBook-Pro-3 dockerfile-sample-1 % docker image build -t customnginx .
+...
+Successfully built ebfa91266979
+Successfully tagged customnginx:latest
+
+Koitaro@MacBook-Pro-3 dockerfile-sample-1 % docker image ls
+REPOSITORY                        TAG                 IMAGE ID            CREATED              SIZE
+customnginx                       latest              ebfa91266979        About
+
+Koitaro@MacBook-Pro-3 dockerfile-sample-1 % docker image build -t customnginx .
+Sending build context to Docker daemon   16.9kB
+Step 1/7 : FROM debian:stretch-slim
+ ---> fa41698012c7
+Step 2/7 : ENV NGINX_VERSION 1.13.6-1~stretch
+ ---> Using cache
+ ---> 48aecbcb2e2d
+Step 3/7 : ENV NJS_VERSION   1.13.6.0.1.14-1~stretch
+ ---> Using cache
+ ---> 53cc711f4088
+Step 4/7 : RUN apt-get update 	&& apt-get install --no-install-recommends --no-install-suggests -y gnupg1 	&& 	NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; 	found=''; 	for server in 		ha.pool.sks-keyservers.net 		hkp://keyserver.ubuntu.com:80 		hkp://p80.pool.sks-keyservers.net:80 		pgp.mit.edu 	; do 		echo "Fetching GPG key $NGINX_GPGKEY from $server"; 		apt-key adv --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$NGINX_GPGKEY" && found=yes && break; 	done; 	test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; 	apt-get remove --purge -y gnupg1 && apt-get -y --purge autoremove && rm -rf /var/lib/apt/lists/* 	&& echo "deb http://nginx.org/packages/mainline/debian/ stretch nginx" >> /etc/apt/sources.list 	&& apt-get update 	&& apt-get install --no-install-recommends --no-install-suggests -y 	nginx=${NGINX_VERSION} 						nginx-module-xslt=${NGINX_VERSION} 						nginx-module-geoip=${NGINX_VERSION} 						nginx-module-image-filter=${NGINX_VERSION} 						nginx-module-njs=${NJS_VERSION} 						gettext-base 	&& rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> d4e5fa6e6d5d
+Step 5/7 : RUN ln -sf /dev/stdout /var/log/nginx/access.log 	&& ln -sf /dev/stderr /var/log/nginx/error.log
+ ---> Using cache
+ ---> 98df2ba614b7
+Step 6/7 : EXPOSE 80 443
+ ---> Using cache
+ ---> 97839d41b3a6
+Step 7/7 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Using cache
+ ---> ebfa91266979
+Successfully built ebfa91266979
+Successfully tagged customnginx:latest
+```
+# Question: Which of the following is an example of a container image? Linux, docker hub, container.jpg, nginx
+## Answer: nginx
+# Question: Which flag would you pass to specify a docker build referencing a file other than the default 'Dockerfile'?
+## Answer: -f
+The -f command is used to specify a dockerfile, with an alias of --file
+# Question: Which Dockerfile stanza (Command) is best to use for changing the directory in a Dockerfile?
+## Answer: WORKKIR
+This is to change the current working directory in Dockerfiles.
+
 
