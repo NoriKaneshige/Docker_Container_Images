@@ -228,26 +228,50 @@ Koitaro@MacBook-Pro-3 ~ % docker image tag --help
 Usage:	docker image tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
 
 Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
-Koitaro@MacBook-Pro-3 ~ % docker image tag nginx bretfisher/nginx
+
+Koitaro@MacBook-Pro-3 ~ % docker image tag nginx norinori400/nginx
 
 Koitaro@MacBook-Pro-3 ~ % docker image ls
-REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
-bretfisher/nginx     latest              602e111c06b6        3 weeks ago         127MB
-nginx                latest              602e111c06b6        3 weeks ago         127MB
+REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+nginx                             stable-perl         cf5662855280        6 days ago          178MB
+nginx                             latest              9beeba249f3e        6 days ago          127MB
+norinori400/nginx                 latest              9beeba249f3e        6 days ago          127MB
+mysql/mysql-server                latest              716286be47c6        3 weeks ago         381MB
+nginx                             1.17.10-alpine      89ec9da68213        3 weeks ago         19.9MB
+norinori400/norikaneshige/nginx   latest              602e111c06b6        4 weeks ago         127MB
+
+Koitaro@MacBook-Pro-3 ~ % docker push norinori400/nginx
+The push refers to repository [docker.io/norinori400/nginx]
+6c7de695ede3: Preparing
+2f4accd375d9: Preparing
+ffc9b21953f4: Preparing
+denied: requested access to the resource is denied                latest              602e111c06b6        3 weeks ago         127MB
 ```
 ## let's try to push
 ```
-Koitaro@MacBook-Pro-3 ~ % docker image push bretfisher/nginx
-The push refers to repository [docker.io/bretfisher/nginx]
-b3003aac411c: Preparing
-216cf33c0a28: Preparing
-c2adabaecedb: Preparing
-denied: requested access to the resource is denied
-
 Koitaro@MacBook-Pro-3 ~ % docker login
-Authenticating with existing credentials...
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: norinori400
+Password:
 Login Succeeded
+Koitaro@MacBook-Pro-3 ~ % cat .docker/config.json
+{
+	"auths": {
+		"https://index.docker.io/v1/": {}
+	},
+	"HttpHeaders": {
+		"User-Agent": "Docker-Client/19.03.8 (darwin)"
+	},
+	"credsStore": "desktop",
+	"stackOrchestrator": "swarm"
+}%                                                                                                                       Koitaro@MacBook-Pro-3 ~ % docker push norinori400/nginx
+The push refers to repository [docker.io/norinori400/nginx]
+6c7de695ede3: Mounted from library/nginx
+2f4accd375d9: Mounted from library/nginx
+ffc9b21953f4: Mounted from library/nginx
+latest: digest: sha256:8269a7352a7dad1f8b3dc83284f195bac72027dd50279422d363d49311ab7d9b size: 948
 ```
+![new_image_pused_to_docker_hub](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/new_image_pused_to_docker_hub.png)
 ## Building Images: The Dockerfile Basics
 ## Below is the basic dockerfile. The instruction of how we build the image
 ```
