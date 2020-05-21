@@ -272,6 +272,28 @@ ffc9b21953f4: Mounted from library/nginx
 latest: digest: sha256:8269a7352a7dad1f8b3dc83284f195bac72027dd50279422d363d49311ab7d9b size: 948
 ```
 ![new_image_pused_to_docker_hub](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/new_image_pused_to_docker_hub.png)
+
+## Could give it another tag to the same image I just pushed to the docker hub
+```
+Koitaro@MacBook-Pro-3 ~ % docker image tag norinori400/nginx norinori400/nginx:testing
+Koitaro@MacBook-Pro-3 ~ % docker image ls
+REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+nginx                             stable-perl         cf5662855280        6 days ago          178MB
+nginx                             latest              9beeba249f3e        6 days ago          127MB
+norinori400/nginx                 latest              9beeba249f3e        6 days ago          127MB
+norinori400/nginx                 testing             9beeba249f3e        6 days ago          127MB
+mysql/mysql-server                latest              716286be47c6        3 weeks ago         381MB
+nginx                             1.17.10-alpine      89ec9da68213        3 weeks ago         19.9MB
+norinori400/norikaneshige/nginx   latest              602e111c06b6        4 weeks ago         127MB
+
+Koitaro@MacBook-Pro-3 ~ % docker push norinori400/nginx:testing
+The push refers to repository [docker.io/norinori400/nginx]
+6c7de695ede3: Layer already exists
+2f4accd375d9: Layer already exists
+ffc9b21953f4: Layer already exists
+testing: digest: sha256:8269a7352a7dad1f8b3dc83284f195bac72027dd50279422d363d49311ab7d9b size: 948
+```
+![new_tag_to_the_same_image_and_pushed](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/new_tag_to_the_same_image_and_pushed.png)
 ## Building Images: The Dockerfile Basics
 ## Below is the basic dockerfile. The instruction of how we build the image
 ```
