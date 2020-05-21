@@ -292,6 +292,9 @@ The push refers to repository [docker.io/norinori400/nginx]
 2f4accd375d9: Layer already exists
 ffc9b21953f4: Layer already exists
 testing: digest: sha256:8269a7352a7dad1f8b3dc83284f195bac72027dd50279422d363d49311ab7d9b size: 948
+
+Koitaro@MacBook-Pro-3 ~ % docker logout
+Removing login credentials for https://index.docker.io/v1/
 ```
 ![new_tag_to_the_same_image_and_pushed](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/new_tag_to_the_same_image_and_pushed.png)
 ## Building Images: The Dockerfile Basics
