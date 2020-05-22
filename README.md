@@ -1210,4 +1210,10 @@ f168d52a989d: Mounted from library/node
 17b7c23fba03: Mounted from library/node
 a464c54f93a9: Mounted from library/node
 latest: digest: sha256:0781b843fc0aef3b449faa8aefbbe770acf677b7d838f4363490b590029e1e61 size: 1997
+
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker image ls
+REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+testnode                          latest              6db78297cc20        46 minutes ago      64.5MB
+norinori400/testing-node          latest              6db78297cc20        46 minutes ago      64.5MB
+nginx-with-html                   latest              31df27b07b71        12 hours ago        127MB
 ```
