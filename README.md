@@ -973,5 +973,206 @@ This is to change the current working directory in Dockerfiles.
 # Build Your Own Image
 ![build_your_own_image](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/build_your_own_image.png)
 ```
+Koitaro@MacBook-Pro-3 udemy-docker-mastery % cd dockerfile-assignment-1
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % ls
+Dockerfile	app.js		package.json	routes
+answer		bin		public		views
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % ls -alF
+total 40
+drwxr-xr-x  13 Koitaro  staff   416 May 14 15:31 ./
+drwxr-xr-x  36 Koitaro  staff  1152 May 14 15:38 ../
+-rw-r--r--   1 Koitaro  staff   402 May 14 15:31 .dockerignore
+-rw-r--r--   1 Koitaro  staff   517 May 14 15:31 .gitignore
+drwxr-xr-x   3 Koitaro  staff    96 May 14 15:31 .vscode/
+-rw-r--r--   1 Koitaro  staff  2311 May 14 15:31 Dockerfile
+drwxr-xr-x   3 Koitaro  staff    96 May 14 15:31 answer/
+-rw-r--r--   1 Koitaro  staff  1256 May 14 15:31 app.js
+drwxr-xr-x   3 Koitaro  staff    96 May 14 15:31 bin/
+-rw-r--r--   1 Koitaro  staff   341 May 14 15:31 package.json
+drwxr-xr-x   4 Koitaro  staff   128 May 14 15:31 public/
+drwxr-xr-x   4 Koitaro  staff   128 May 14 15:31 routes/
+drwxr-xr-x   5 Koitaro  staff   160 May 14 15:31 views/
+```
+## Dockerfile
+```
+# exposing 3000 here because app is designed to run on when we run it with docker run
+# do not forget to use -p with port 80 going to port 3000
+EXPOSE 3000
 
+# - then it should use alpine package manager to install tini: 'apk add --update tini'
+RUN apk add --update tini
+
+# - then it should create directory /usr/src/app for app files with 'mkdir -p /usr/src/app'
+RUN mkdir -p /usr/src/app
+
+# - Node uses a "package manager", so it needs to copy in package.json file
+# changing working directory
+WORKDIR /usr/src/app
+COPY package.json package.json
+
+# - then it needs to run 'npm install' to install dependencies from that file
+# - to keep it clean and small, run 'npm cache clean --force' after above
+# usually when we run cleanup command, we want to run it in the same RUN line
+# it removes everything at the same time, you only get one image layer
+# && is a conditional, if the first command is successful, then do the second command
+RUN npm install && npm cache clean
+
+# - then it needs to copy in all files from current directory
+# . . means copy everything from my current directory on the host to the current working directory in the image
+COPY . .
+
+# - then it needs to start container with command '/sbin/tini -- node ./bin/www'
+CMD [ "tini", "--", "node", "./bin/www" ]
+
+# - in the end you should be using FROM, RUN, WORKDIR, COPY, EXPOSE, and CMD commands
+
+# Bonus Extra Credit
+# this will not have you setting up a complete image useful for local development, test, and prod
+# it's just meant to get you started with basic Dockerfile concepts and not focus too much on
+# proper Node.js use in a container. **If you happen to be a Node.js Developer**, then 
+# after you get through more of this course, you should come back and use my 
+# Node Docker Good Defaults sample project on GitHub to change this Dockerfile for 
+# better local development with more advanced topics
+# https://github.com/BretFisher/node-docker-good-defaults
+```
+## Now let's build the image
+## build it in that directory by "."
+```
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker build -t testnode .
+Sending build context to Docker daemon  443.9kB
+Step 1/9 : FROM node:6-alpine
+6-alpine: Pulling from library/node
+bdf0201b3a05: Pull complete
+e9fa13fdf0f5: Pull complete
+ccc877228d8f: Pull complete
+Digest: sha256:17258206fc9256633c7100006b1cfdf25b129b6a40b8e5d37c175026482c84e3
+Status: Downloaded newer image for node:6-alpine
+ ---> dfc29bfa7d41
+Step 2/9 : EXPOSE 3000
+ ---> Running in 32ab6c59494d
+Removing intermediate container 32ab6c59494d
+ ---> 2ba10fc433c5
+Step 3/9 : RUN apk add --update tini
+ ---> Running in c24036a4460b
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.9/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.9/community/x86_64/APKINDEX.tar.gz
+(1/1) Installing tini (0.18.0-r0)
+Executing busybox-1.29.3-r10.trigger
+OK: 7 MiB in 17 packages
+Removing intermediate container c24036a4460b
+ ---> 1d96c808dbef
+Step 4/9 : RUN mkdir -p /usr/src/app
+ ---> Running in 83ee2d458fbd
+Removing intermediate container 83ee2d458fbd
+ ---> 88aa250fdab0
+Step 5/9 : WORKDIR /usr/src/app
+ ---> Running in b9849802c90b
+Removing intermediate container b9849802c90b
+ ---> 9929b57847d5
+Step 6/9 : COPY package.json package.json
+ ---> c1e5a373012d
+Step 7/9 : RUN npm install && npm cache clean
+ ---> Running in 94c888a5ad5f
+dockerfile-assignment-1@0.0.0 /usr/src/app
++-- body-parser@1.19.0
+| +-- bytes@3.1.0
+| +-- content-type@1.0.4
+| +-- depd@1.1.2
+| +-- http-errors@1.7.2
+| | +-- inherits@2.0.3
+| | `-- toidentifier@1.0.0
+| +-- iconv-lite@0.4.24
+| | `-- safer-buffer@2.1.2
+| +-- on-finished@2.3.0
+| | `-- ee-first@1.1.1
+| +-- qs@6.7.0
+| +-- raw-body@2.4.0
+| | `-- unpipe@1.0.0
+| `-- type-is@1.6.18
+|   +-- media-typer@0.3.0
+|   `-- mime-types@2.1.27
+|     `-- mime-db@1.44.0
++-- cookie-parser@1.4.5
+| +-- cookie@0.4.0
+| `-- cookie-signature@1.0.6
++-- debug@2.6.9
+| `-- ms@2.0.0
++-- express@4.17.1
+| +-- accepts@1.3.7
+| | `-- negotiator@0.6.2
+| +-- array-flatten@1.1.1
+| +-- content-disposition@0.5.3
+| +-- encodeurl@1.0.2
+| +-- escape-html@1.0.3
+| +-- etag@1.8.1
+| +-- finalhandler@1.1.2
+| +-- fresh@0.5.2
+| +-- merge-descriptors@1.0.1
+| +-- methods@1.1.2
+| +-- parseurl@1.3.3
+| +-- path-to-regexp@0.1.7
+| +-- proxy-addr@2.0.6
+| | +-- forwarded@0.1.2
+| | `-- ipaddr.js@1.9.1
+| +-- range-parser@1.2.1
+| +-- safe-buffer@5.1.2
+| +-- send@0.17.1
+| | +-- destroy@1.0.4
+| | +-- mime@1.6.0
+| | `-- ms@2.1.1
+| +-- serve-static@1.14.1
+| +-- setprototypeof@1.1.1
+| +-- statuses@1.5.0
+| +-- utils-merge@1.0.1
+| `-- vary@1.1.2
++-- hbs@4.0.6
+| +-- handlebars@4.3.5
+| | +-- neo-async@2.6.1
+| | +-- optimist@0.6.1
+| | | +-- minimist@0.0.10
+| | | `-- wordwrap@0.0.3
+| | +-- source-map@0.6.1
+| | `-- uglify-js@3.9.3
+| |   `-- commander@2.20.3
+| `-- walk@2.3.14
+|   `-- foreachasync@3.0.0
++-- morgan@1.10.0
+| +-- basic-auth@2.0.1
+| +-- depd@2.0.0
+| `-- on-headers@1.0.2
+`-- serve-favicon@2.5.0
+  +-- ms@2.1.1
+  `-- safe-buffer@5.1.1
+
+Removing intermediate container 94c888a5ad5f
+ ---> f1a02e55b2fc
+Step 8/9 : COPY . .
+ ---> 87b1cc0fa221
+Step 9/9 : CMD [ "tini", "--", "node", "./bin/www" ]
+ ---> Running in c046b41046ea
+Removing intermediate container c046b41046ea
+ ---> 6db78297cc20
+Successfully built 6db78297cc20
+Successfully tagged testnode:latest
+
+
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker image ls
+REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+testnode                          latest              6db78297cc20        6 minutes ago       64.5MB
+nginx-with-html                   latest              31df27b07b71        11 hours ago        127MB
+norinori400/nginx-with-html       latest              31df27b07b71        11 hours ago        127MB
+customnginx                       latest              b71c8c804777        13 hours ago        108MB
+nginx                             stable-perl         cf5662855280        6 days ago          178MB
+nginx                             latest              9beeba249f3e        6 days ago          127MB
+norinori400/nginx                 latest              9beeba249f3e        6 days ago          127MB
+```
+## Now let's run a container
+## open the port, wants to run 80, listens on 3000, specify the image name
+![run_a_container_on_the_image](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/run_a_container_on_the_image.png)
+```
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker container run --rm -p 80:3000 testnode
+GET /favicon.ico 404 115.159 ms - 970
+GET / 200 14.207 ms - 290
+GET /stylesheets/style.css 200 14.463 ms - 111
+GET /images/picard.gif 200 13.427 ms - 417700
 ```
