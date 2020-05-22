@@ -926,7 +926,40 @@ nginx                             1.17.10-alpine      89ec9da68213        3 week
 Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker container run -p 80:80 --rm nginx-with-html
 172.17.0.1 - - [22/May/2020:03:45:44 +0000] "GET / HTTP/1.1" 200 249 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36" "-"
 ```
+## Let's send this new image to docker hub
+## We need to re-tag it first, then push it to docker hub
+![push_newly_tagged_image](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/push_newly_tagged_image.png)
+```
+Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker image tag nginx-with-html:latest norinori400/nginx-with-html:latest
 
+Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker login
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: norinori400
+Password:
+Login Succeeded
+
+Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker image ls
+REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+nginx-with-html                   latest              31df27b07b71        15 minutes ago      127MB
+norinori400/nginx-with-html       latest              31df27b07b71        15 minutes ago      127MB
+customnginx                       latest              b71c8c804777        2 hours ago         108MB
+nginx                             stable-perl         cf5662855280        6 days ago          178MB
+norinori400/nginx                 latest              9beeba249f3e        6 days ago          127MB
+norinori400/nginx                 testing             9beeba249f3e        6 days ago          127MB
+nginx                             latest              9beeba249f3e        6 days ago          127MB
+debian                            stretch-slim        fa41698012c7        6 days ago          55.3MB
+mysql/mysql-server                latest              716286be47c6        3 weeks ago         381MB
+nginx                             1.17.10-alpine      89ec9da68213        3 weeks ago         19.9MB
+norinori400/norikaneshige/nginx   latest              602e111c06b6        4 weeks ago         127MB
+
+Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker push norinori400/nginx-with-html:latest
+The push refers to repository [docker.io/norinori400/nginx-with-html]
+4f24fa9ce38d: Pushed
+6c7de695ede3: Mounted from norinori400/nginx
+2f4accd375d9: Mounted from norinori400/nginx
+ffc9b21953f4: Mounted from norinori400/nginx
+latest: digest: sha256:fbe0a3d50d6df8664f21b59c98c8a6c55a42056653dd1217be24f64856c7cb7c size: 1155
+```
 
 # Question: Which of the following is an example of a container image? Linux, docker hub, container.jpg, nginx
 ## Answer: nginx
