@@ -1218,11 +1218,20 @@ norinori400/testing-node          latest              6db78297cc20        46 min
 nginx-with-html                   latest              31df27b07b71        12 hours ago        127MB
 ```
 ## Let's remove the image, norinori400/testing-node, and run new container by downloading norinori400/testing-node from docker hub
+## Note: Unable to find image 'norinori400/testing-node:latest' locally, so download it from docker hub
+## Do not forget my docker hub's norinori400
 ```
 Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker image rm norinori400/testing-node
 Untagged: norinori400/testing-node:latest
 Untagged: norinori400/testing-node@sha256:0781b843fc0aef3b449faa8aefbbe770acf677b7d838f4363490b590029e1e61
 
-
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker container run --rm -p 80:3000 norinori400/testing-node
+Unable to find image 'norinori400/testing-node:latest' locally
+latest: Pulling from norinori400/testing-node
+Digest: sha256:0781b843fc0aef3b449faa8aefbbe770acf677b7d838f4363490b590029e1e61
+Status: Downloaded newer image for norinori400/testing-node:latest
+GET / 304 136.277 ms - -
+GET /images/picard.gif 304 3.095 ms - -
+GET /stylesheets/style.css 304 11.713 ms - -
 
 ```
