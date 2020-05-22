@@ -848,6 +848,47 @@ drwxr-xr-x  36 Koitaro  staff   1152 May 14 15:38 ../
 -rw-r--r--   1 Koitaro  staff  12288 May 15 18:13 .Dockerfile.swp
 -rw-r--r--@  1 Koitaro  staff   2471 May 21 21:09 Dockerfile
 ```
+## Building Images: Extending Official Images
+## we goona copy inde.html into our container as we building it
+```
+Koitaro@MacBook-Pro-3 dockerfile-sample-2 % ls -alF
+total 16
+drwxr-xr-x@  4 Koitaro  staff   128 May 15 19:34 ./
+drwxr-xr-x  36 Koitaro  staff  1152 May 14 15:38 ../
+-rw-r--r--   1 Koitaro  staff   410 May 14 15:31 Dockerfile
+-rw-r--r--   1 Koitaro  staff   249 May 14 15:31 index.html
+
+## here is the docker file
+## this shows how we can extend/change an existing official image from Docker Hub
+## we are using nginx as FROM command
+
+FROM nginx:latest
+# highly recommend you always pin versions for anything beyond dev/learn
+
+WORKDIR /usr/share/nginx/html
+# change working directory to root of nginx webhost
+# using WORKDIR is preferred to using 'RUN cd /some/path'
+
+COPY index.html index.html
+# copy my source code from my local machine into your container images
+# I don't have to specify EXPOSE or CMD because they're in my FROM
+# we take a simple html file and overwrite the file in the nginx default derectory 
+
+Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                          PORTS               NAMES
+e1ccc84f983e        nginx               "nginx -g 'daemon of…"   2 minutes ago       Exited (0) About a minute ago                       eager_pike
+b55f96369007        nginx               "nginx -g 'daemon of…"   8 minutes ago       Exited (0) 8 minutes ago                            reverent_thompson
+2d1404040941        602e111c06b6        "nginx -g 'daemon of…"   6 days ago          Exited (255) 5 days ago         80/tcp              my_nginx
+6a1189201ac1        602e111c06b6        "nginx -g 'daemon of…"   6 days ago          Exited (255) 5 days ago         80/tcp              new_nginx
+```
+## check what the default nginx server does
+![what_default_nginx_server_does](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/what_default_nginx_server_does.png)
+```
+Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker container run -p 80:80 --rm nginx
+172.17.0.1 - - [22/May/2020:03:32:21 +0000] "GET / HTTP/1.1" 200 612 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36" "-"
+172.17.0.1 - - [22/May/2020:03:32:21 +0000] "GET /favicon.ico HTTP/1.1" 404 556 "http://localhost/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36" "-"
+2020/05/22 03:32:21 [error] 8#8: *2 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.17.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost", referrer: "http://localhost/"
+```
 
 # Question: Which of the following is an example of a container image? Linux, docker hub, container.jpg, nginx
 ## Answer: nginx
