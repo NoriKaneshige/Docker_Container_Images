@@ -967,7 +967,7 @@ latest: digest: sha256:fbe0a3d50d6df8664f21b59c98c8a6c55a42056653dd1217be24f6485
 ## Answer: -f
 The -f command is used to specify a dockerfile, with an alias of --file
 # Question: Which Dockerfile stanza (Command) is best to use for changing the directory in a Dockerfile?
-## Answer: WORKKIR
+## Answer: WORKDIR
 This is to change the current working directory in Dockerfiles.
 
 
