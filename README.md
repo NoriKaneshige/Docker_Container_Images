@@ -1233,5 +1233,5 @@ Status: Downloaded newer image for norinori400/testing-node:latest
 GET / 304 136.277 ms - -
 GET /images/picard.gif 304 3.095 ms - -
 GET /stylesheets/style.css 304 11.713 ms - -
-
 ```
+![running-container-with-downloade](running-container-with-downloade.gif)
