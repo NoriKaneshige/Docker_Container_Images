@@ -1176,3 +1176,38 @@ GET / 200 14.207 ms - 290
 GET /stylesheets/style.css 200 14.463 ms - 111
 GET /images/picard.gif 200 13.427 ms - 417700
 ```
+## Need to rename the created image before we push it into docker hub
+![pushed_to_docker_hub](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/pushed_to_docker_hub.png)
+```
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker image ls
+REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+testnode                          latest              6db78297cc20        34 minutes ago      64.5MB
+nginx-with-html                   latest              31df27b07b71        12 hours ago        127MB
+norinori400/nginx-with-html       latest              31df27b07b71        12 hours ago        127MB
+
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker tag --help
+
+Usage:	docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+
+Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker tag testnode norinori400/testing-node
+
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker login
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: norinori400
+Password:
+Login Succeeded
+
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker push norinori400/testing-node
+The push refers to repository [docker.io/norinori400/testing-node]
+25cf82c5e772: Pushed
+74a38db8ad6d: Pushed
+e7e6675cbcf8: Pushed
+0b326fb814a5: Pushed
+39aae098b757: Pushed
+f168d52a989d: Mounted from library/node
+17b7c23fba03: Mounted from library/node
+a464c54f93a9: Mounted from library/node
+latest: digest: sha256:0781b843fc0aef3b449faa8aefbbe770acf677b7d838f4363490b590029e1e61 size: 1997
+```
