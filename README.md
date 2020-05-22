@@ -882,6 +882,7 @@ b55f96369007        nginx               "nginx -g 'daemon of…"   8 minutes ago
 6a1189201ac1        602e111c06b6        "nginx -g 'daemon of…"   6 days ago          Exited (255) 5 days ago         80/tcp              new_nginx
 ```
 ## check what the default nginx server does
+## '--rm' means 'delete on quitting'
 ![what_default_nginx_server_does](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/what_default_nginx_server_does.png)
 ```
 Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker container run -p 80:80 --rm nginx
@@ -889,6 +890,43 @@ Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker container run -p 80:80 --rm n
 172.17.0.1 - - [22/May/2020:03:32:21 +0000] "GET /favicon.ico HTTP/1.1" 404 556 "http://localhost/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36" "-"
 2020/05/22 03:32:21 [error] 8#8: *2 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.17.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost", referrer: "http://localhost/"
 ```
+## Let's now buld our version of nginx image with our extra source code file, index.html
+## we already have our nginx image cache, and just copying very small file and change in our working directory
+```
+Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker image build -t nginx-with-html .
+Sending build context to Docker daemon  3.072kB
+Step 1/3 : FROM nginx:latest
+ ---> 9beeba249f3e
+Step 2/3 : WORKDIR /usr/share/nginx/html
+ ---> Running in 32f05a379eee
+Removing intermediate container 32f05a379eee
+ ---> e7859fc8ce64
+Step 3/3 : COPY index.html index.html
+ ---> 31df27b07b71
+Successfully built 31df27b07b71
+Successfully tagged nginx-with-html:latest
+```
+## Then, this time, we just run the new image we just built, instead of default nginx server
+## then, swith over to our browser, localhost
+![run_the_new_image](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/run_the_new_image.png)
+
+```
+Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker image ls
+REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+nginx-with-html                   latest              31df27b07b71        3 minutes ago       127MB
+customnginx                       latest              b71c8c804777        2 hours ago         108MB
+nginx                             stable-perl         cf5662855280        6 days ago          178MB
+nginx                             latest              9beeba249f3e        6 days ago          127MB
+norinori400/nginx                 latest              9beeba249f3e        6 days ago          127MB
+norinori400/nginx                 testing             9beeba249f3e        6 days ago          127MB
+debian                            stretch-slim        fa41698012c7        6 days ago          55.3MB
+mysql/mysql-server                latest              716286be47c6        3 weeks ago         381MB
+nginx                             1.17.10-alpine      89ec9da68213        3 weeks ago         19.9MB
+
+Koitaro@MacBook-Pro-3 dockerfile-sample-2 % docker container run -p 80:80 --rm nginx-with-html
+172.17.0.1 - - [22/May/2020:03:45:44 +0000] "GET / HTTP/1.1" 200 249 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36" "-"
+```
+
 
 # Question: Which of the following is an example of a container image? Linux, docker hub, container.jpg, nginx
 ## Answer: nginx
