@@ -355,6 +355,427 @@ CMD ["nginx", "-g", "daemon off;"]
 # required: run this command when container is launched
 # only one CMD allowed, so if there are multiple, last one wins
 ```
+## ll is aliased to 'ls -alF'
+```
+Koitaro@MacBook-Pro-3 dockerfile-sample-1 % ls -alF
+total 56
+drwxr-xr-x   5 Koitaro  staff    160 May 21 21:28 ./
+drwxr-xr-x  36 Koitaro  staff   1152 May 14 15:38 ../
+-rw-r--r--   1 Koitaro  staff  12288 May 21 21:29 .Dockerfile.swo
+-rw-r--r--   1 Koitaro  staff  12288 May 15 18:13 .Dockerfile.swp
+-rw-r--r--@  1 Koitaro  staff   2471 May 21 21:09 Dockerfile
+```
+## Building Images: Running Docker Builds
+## Docker file is an instraction of how to build the image.
+## FROM command, when we build this image, actuallu pulls debian image from 
+## docker hub, down to my local cache, execute line by line inside of my docker
+## engine, and cache each of those layers.
+## '.' means that 'build a docker file in this directory'
+```
+Koitaro@MacBook-Pro-3 dockerfile-sample-1 % docker image build -t customnginx .
+Sending build context to Docker daemon   29.7kB
+Step 1/7 : FROM debian:stretch-slim
+stretch-slim: Pulling from library/debian
+e62d08fa1eb1: Pull complete
+Digest: sha256:b385ea429b383b690c955043d79050d1cb76346fbca67e3ed3649d5019dd6749
+Status: Downloaded newer image for debian:stretch-slim
+ ---> fa41698012c7
+Step 2/7 : ENV NGINX_VERSION 1.13.6-1~stretch
+ ---> Running in 70281a66e868
+Removing intermediate container 70281a66e868
+ ---> cf9a9e06cc60
+Step 3/7 : ENV NJS_VERSION   1.13.6.0.1.14-1~stretch
+ ---> Running in 049489b1fb6a
+Removing intermediate container 049489b1fb6a
+ ---> 19be3e10f2c3
+Step 4/7 : RUN apt-get update 	&& apt-get install --no-install-recommends --no-install-suggests -y gnupg1 	&& 	NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; 	found=''; 	for server in 	  	ha.pool.sks-keyservers.net 		hkp://keyserver.ubuntu.com:80 		hkp://p80.pool.sks-keyservers.net:80 		pgp.mit.edu 	; do 		echo "Fetching GPG key $NGINX_GPGKEY from $server"; 		apt-key adv --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$NGINX_GPGKEY" && found=yes && break; 	done; 	test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; 	apt-get remove --purge -y gnupg1 && apt-get -y --purge autoremove && rm -rf /var/lib/apt/lists/* 	&& echo "deb http://nginx.org/packages/mainline/debian/ stretch nginx" >> /etc/apt/sources.list 	&& apt-get update 	&& apt-get install --no-install-recommends --no-install-suggests -y 	nginx=${NGINX_VERSION} 						nginx-module-xslt=${NGINX_VERSION} 						nginx-module-geoip=${NGINX_VERSION} 		   				nginx-module-image-filter=${NGINX_VERSION} 				    		nginx-module-njs=${NJS_VERSION} 						gettext-base 	&& rm -rf /var/lib/apt/lists/*
+ ---> Running in 3f12285b9f14
+Ign:1 http://deb.debian.org/debian stretch InRelease
+Get:2 http://deb.debian.org/debian stretch-updates InRelease [91.0 kB]
+Get:3 http://deb.debian.org/debian stretch Release [118 kB]
+Get:4 http://deb.debian.org/debian stretch-updates/main amd64 Packages [27.9 kB]
+Get:5 http://deb.debian.org/debian stretch Release.gpg [2410 B]
+Get:6 http://deb.debian.org/debian stretch/main amd64 Packages [7083 kB]
+Err:7 http://security.debian.org/debian-security stretch/updates InRelease
+  Temporary failure resolving 'security.debian.org'
+Fetched 7323 kB in 19s (366 kB/s)
+Reading package lists...
+W: Failed to fetch http://security.debian.org/debian-security/dists/stretch/updates/InRelease  Temporary failure resolving 'security.debian.org'
+W: Some index files failed to download. They have been ignored, or old ones used instead.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  libreadline7 readline-common
+Suggested packages:
+  libpcsclite1 parcimonie xloadimage | imagemagick | eog readline-doc
+Recommended packages:
+  gnupg1-curl gnupg1-l10n libldap-2.4-2
+The following NEW packages will be installed:
+  gnupg1 libreadline7 readline-common
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Need to get 822 kB of archives.
+After this operation, 1935 kB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian stretch/main amd64 readline-common all 7.0-3 [70.4 kB]
+Get:2 http://deb.debian.org/debian stretch/main amd64 libreadline7 amd64 7.0-3 [151 kB]
+Get:3 http://deb.debian.org/debian stretch/main amd64 gnupg1 amd64 1.4.21-4+deb9u1 [601 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 822 kB in 0s (976 kB/s)
+Selecting previously unselected package readline-common.
+(Reading database ... 6317 files and directories currently installed.)
+Preparing to unpack .../readline-common_7.0-3_all.deb ...
+Unpacking readline-common (7.0-3) ...
+Selecting previously unselected package libreadline7:amd64.
+Preparing to unpack .../libreadline7_7.0-3_amd64.deb ...
+Unpacking libreadline7:amd64 (7.0-3) ...
+Selecting previously unselected package gnupg1.
+Preparing to unpack .../gnupg1_1.4.21-4+deb9u1_amd64.deb ...
+Unpacking gnupg1 (1.4.21-4+deb9u1) ...
+Setting up readline-common (7.0-3) ...
+Setting up libreadline7:amd64 (7.0-3) ...
+Setting up gnupg1 (1.4.21-4+deb9u1) ...
+Processing triggers for libc-bin (2.24-11+deb9u4) ...
+Fetching GPG key 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62 from ha.pool.sks-keyservers.net
+Warning: apt-key output should not be parsed (stdout is not a terminal)
+Executing: /tmp/apt-key-gpghome.IYOkbCC2xm/gpg.1.sh --keyserver ha.pool.sks-keyservers.net --keyserver-options timeout=10 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+gpg: requesting key 7BD9BF62 from hkp server ha.pool.sks-keyservers.net
+gpg: key 7BD9BF62: public key "nginx signing key <signing-key@nginx.com>" imported
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages were automatically installed and are no longer required:
+  libreadline7 readline-common
+Use 'apt autoremove' to remove them.
+The following packages will be REMOVED:
+  gnupg1*
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+After this operation, 1418 kB disk space will be freed.
+(Reading database ... 6371 files and directories currently installed.)
+Removing gnupg1 (1.4.21-4+deb9u1) ...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  libreadline7* readline-common*
+0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+After this operation, 517 kB disk space will be freed.
+(Reading database ... 6341 files and directories currently installed.)
+Removing libreadline7:amd64 (7.0-3) ...
+Removing readline-common (7.0-3) ...
+Processing triggers for libc-bin (2.24-11+deb9u4) ...
+(Reading database ... 6317 files and directories currently installed.)
+Purging configuration files for readline-common (7.0-3) ...
+Ign:1 http://deb.debian.org/debian stretch InRelease
+Get:2 http://deb.debian.org/debian stretch-updates InRelease [91.0 kB]
+Get:3 http://deb.debian.org/debian stretch Release [118 kB]
+Get:4 http://nginx.org/packages/mainline/debian stretch InRelease [2866 B]
+Get:5 http://deb.debian.org/debian stretch Release.gpg [2410 B]
+Get:6 http://deb.debian.org/debian stretch-updates/main amd64 Packages [27.9 kB]
+Get:7 http://nginx.org/packages/mainline/debian stretch/nginx amd64 Packages [73.8 kB]
+Get:8 http://deb.debian.org/debian stretch/main amd64 Packages [7083 kB]
+Err:9 http://security.debian.org/debian-security stretch/updates InRelease
+  Temporary failure resolving 'security.debian.org'
+Fetched 7399 kB in 19s (370 kB/s)
+Reading package lists...
+W: Failed to fetch http://security.debian.org/debian-security/dists/stretch/updates/InRelease  Temporary failure resolving 'security.debian.org'
+W: Some index files failed to download. They have been ignored, or old ones used instead.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  fontconfig-config fonts-dejavu-core libbsd0 libedit2 libexpat1
+  libfontconfig1 libfreetype6 libgd3 libgeoip1 libicu57 libjbig0
+  libjpeg62-turbo libncurses5 libpng16-16 libssl1.1 libtiff5 libwebp6 libx11-6
+  libx11-data libxau6 libxcb1 libxdmcp6 libxml2 libxpm4 libxslt1.1 ucf
+Suggested packages:
+  libgd-tools geoip-bin
+Recommended packages:
+  geoip-database libgpm2 xml-core
+The following NEW packages will be installed:
+  fontconfig-config fonts-dejavu-core gettext-base libbsd0 libedit2 libexpat1
+  libfontconfig1 libfreetype6 libgd3 libgeoip1 libicu57 libjbig0
+  libjpeg62-turbo libncurses5 libpng16-16 libssl1.1 libtiff5 libwebp6 libx11-6
+  libx11-data libxau6 libxcb1 libxdmcp6 libxml2 libxpm4 libxslt1.1 nginx
+  nginx-module-geoip nginx-module-image-filter nginx-module-njs
+  nginx-module-xslt ucf
+0 upgraded, 32 newly installed, 0 to remove and 0 not upgraded.
+Need to get 16.5 MB of archives.
+After this operation, 55.3 MB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian stretch/main amd64 libxau6 amd64 1:1.0.8-1 [20.7 kB]
+Get:2 http://deb.debian.org/debian stretch/main amd64 libssl1.1 amd64 1.1.0l-1~deb9u1 [1358 kB]
+Get:3 http://nginx.org/packages/mainline/debian stretch/nginx amd64 nginx amd64 1.13.6-1~stretch [799 kB]
+Get:4 http://deb.debian.org/debian stretch/main amd64 gettext-base amd64 0.19.8.1-2+deb9u1 [122 kB]
+Get:5 http://deb.debian.org/debian stretch/main amd64 libbsd0 amd64 0.8.3-1 [83.0 kB]
+Get:6 http://deb.debian.org/debian stretch/main amd64 libncurses5 amd64 6.0+20161126-1+deb9u2 [93.4 kB]
+Get:7 http://deb.debian.org/debian stretch/main amd64 libedit2 amd64 3.1-20160903-3 [84.8 kB]
+Get:8 http://nginx.org/packages/mainline/debian stretch/nginx amd64 nginx-module-geoip amd64 1.13.6-1~stretch [71.9 kB]
+Get:9 http://nginx.org/packages/mainline/debian stretch/nginx amd64 nginx-module-image-filter amd64 1.13.6-1~stretch [75.9 kB]
+Get:10 http://nginx.org/packages/mainline/debian stretch/nginx amd64 nginx-module-njs amd64 1.13.6.0.1.14-1~stretch [213 kB]
+Get:11 http://deb.debian.org/debian stretch/main amd64 libicu57 amd64 57.1-6+deb9u3 [7705 kB]
+Get:12 http://deb.debian.org/debian stretch/main amd64 libxml2 amd64 2.9.4+dfsg1-2.2+deb9u2 [920 kB]
+Get:13 http://deb.debian.org/debian stretch/main amd64 ucf all 3.0036 [70.2 kB]
+Get:14 http://deb.debian.org/debian stretch/main amd64 fonts-dejavu-core all 2.37-1 [1068 kB]
+Get:15 http://nginx.org/packages/mainline/debian stretch/nginx amd64 nginx-module-xslt amd64 1.13.6-1~stretch [73.3 kB]
+Get:16 http://deb.debian.org/debian stretch/main amd64 fontconfig-config all 2.11.0-6.7 [271 kB]
+Get:17 http://deb.debian.org/debian stretch/main amd64 libexpat1 amd64 2.2.0-2+deb9u3 [83.7 kB]
+Get:18 http://deb.debian.org/debian stretch/main amd64 libpng16-16 amd64 1.6.28-1+deb9u1 [280 kB]
+Get:19 http://deb.debian.org/debian stretch/main amd64 libfreetype6 amd64 2.6.3-3.2+deb9u1 [438 kB]
+Get:20 http://deb.debian.org/debian stretch/main amd64 libfontconfig1 amd64 2.11.0-6.7+b1 [331 kB]
+Get:21 http://deb.debian.org/debian stretch/main amd64 libjpeg62-turbo amd64 1:1.5.1-2 [134 kB]
+Get:22 http://deb.debian.org/debian stretch/main amd64 libjbig0 amd64 2.1-3.1+b2 [31.0 kB]
+Get:23 http://deb.debian.org/debian stretch/main amd64 libtiff5 amd64 4.0.8-2+deb9u4 [238 kB]
+Get:24 http://deb.debian.org/debian stretch/main amd64 libwebp6 amd64 0.5.2-1 [235 kB]
+Get:25 http://deb.debian.org/debian stretch/main amd64 libxdmcp6 amd64 1:1.1.2-3 [26.3 kB]
+Get:26 http://deb.debian.org/debian stretch/main amd64 libxcb1 amd64 1.12-1 [133 kB]
+Get:27 http://deb.debian.org/debian stretch/main amd64 libx11-data all 2:1.6.4-3+deb9u1 [287 kB]
+Get:28 http://deb.debian.org/debian stretch/main amd64 libx11-6 amd64 2:1.6.4-3+deb9u1 [748 kB]
+Get:29 http://deb.debian.org/debian stretch/main amd64 libxpm4 amd64 1:3.5.12-1 [49.1 kB]
+Get:30 http://deb.debian.org/debian stretch/main amd64 libgd3 amd64 2.2.4-2+deb9u5 [132 kB]
+Get:31 http://deb.debian.org/debian stretch/main amd64 libgeoip1 amd64 1.6.9-4 [90.5 kB]
+Get:32 http://deb.debian.org/debian stretch/main amd64 libxslt1.1 amd64 1.1.29-2.1+deb9u2 [233 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 16.5 MB in 20s (799 kB/s)
+Selecting previously unselected package libxau6:amd64.
+(Reading database ... 6317 files and directories currently installed.)
+Preparing to unpack .../00-libxau6_1%3a1.0.8-1_amd64.deb ...
+Unpacking libxau6:amd64 (1:1.0.8-1) ...
+Selecting previously unselected package libssl1.1:amd64.
+Preparing to unpack .../01-libssl1.1_1.1.0l-1~deb9u1_amd64.deb ...
+Unpacking libssl1.1:amd64 (1.1.0l-1~deb9u1) ...
+Selecting previously unselected package gettext-base.
+Preparing to unpack .../02-gettext-base_0.19.8.1-2+deb9u1_amd64.deb ...
+Unpacking gettext-base (0.19.8.1-2+deb9u1) ...
+Selecting previously unselected package libbsd0:amd64.
+Preparing to unpack .../03-libbsd0_0.8.3-1_amd64.deb ...
+Unpacking libbsd0:amd64 (0.8.3-1) ...
+Selecting previously unselected package libncurses5:amd64.
+Preparing to unpack .../04-libncurses5_6.0+20161126-1+deb9u2_amd64.deb ...
+Unpacking libncurses5:amd64 (6.0+20161126-1+deb9u2) ...
+Selecting previously unselected package libedit2:amd64.
+Preparing to unpack .../05-libedit2_3.1-20160903-3_amd64.deb ...
+Unpacking libedit2:amd64 (3.1-20160903-3) ...
+Selecting previously unselected package libicu57:amd64.
+Preparing to unpack .../06-libicu57_57.1-6+deb9u3_amd64.deb ...
+Unpacking libicu57:amd64 (57.1-6+deb9u3) ...
+Selecting previously unselected package libxml2:amd64.
+Preparing to unpack .../07-libxml2_2.9.4+dfsg1-2.2+deb9u2_amd64.deb ...
+Unpacking libxml2:amd64 (2.9.4+dfsg1-2.2+deb9u2) ...
+Selecting previously unselected package ucf.
+Preparing to unpack .../08-ucf_3.0036_all.deb ...
+Moving old data out of the way
+Unpacking ucf (3.0036) ...
+Selecting previously unselected package fonts-dejavu-core.
+Preparing to unpack .../09-fonts-dejavu-core_2.37-1_all.deb ...
+Unpacking fonts-dejavu-core (2.37-1) ...
+Selecting previously unselected package fontconfig-config.
+Preparing to unpack .../10-fontconfig-config_2.11.0-6.7_all.deb ...
+Unpacking fontconfig-config (2.11.0-6.7) ...
+Selecting previously unselected package libexpat1:amd64.
+Preparing to unpack .../11-libexpat1_2.2.0-2+deb9u3_amd64.deb ...
+Unpacking libexpat1:amd64 (2.2.0-2+deb9u3) ...
+Selecting previously unselected package libpng16-16:amd64.
+Preparing to unpack .../12-libpng16-16_1.6.28-1+deb9u1_amd64.deb ...
+Unpacking libpng16-16:amd64 (1.6.28-1+deb9u1) ...
+Selecting previously unselected package libfreetype6:amd64.
+Preparing to unpack .../13-libfreetype6_2.6.3-3.2+deb9u1_amd64.deb ...
+Unpacking libfreetype6:amd64 (2.6.3-3.2+deb9u1) ...
+Selecting previously unselected package libfontconfig1:amd64.
+Preparing to unpack .../14-libfontconfig1_2.11.0-6.7+b1_amd64.deb ...
+Unpacking libfontconfig1:amd64 (2.11.0-6.7+b1) ...
+Selecting previously unselected package libjpeg62-turbo:amd64.
+Preparing to unpack .../15-libjpeg62-turbo_1%3a1.5.1-2_amd64.deb ...
+Unpacking libjpeg62-turbo:amd64 (1:1.5.1-2) ...
+Selecting previously unselected package libjbig0:amd64.
+Preparing to unpack .../16-libjbig0_2.1-3.1+b2_amd64.deb ...
+Unpacking libjbig0:amd64 (2.1-3.1+b2) ...
+Selecting previously unselected package libtiff5:amd64.
+Preparing to unpack .../17-libtiff5_4.0.8-2+deb9u4_amd64.deb ...
+Unpacking libtiff5:amd64 (4.0.8-2+deb9u4) ...
+Selecting previously unselected package libwebp6:amd64.
+Preparing to unpack .../18-libwebp6_0.5.2-1_amd64.deb ...
+Unpacking libwebp6:amd64 (0.5.2-1) ...
+Selecting previously unselected package libxdmcp6:amd64.
+Preparing to unpack .../19-libxdmcp6_1%3a1.1.2-3_amd64.deb ...
+Unpacking libxdmcp6:amd64 (1:1.1.2-3) ...
+Selecting previously unselected package libxcb1:amd64.
+Preparing to unpack .../20-libxcb1_1.12-1_amd64.deb ...
+Unpacking libxcb1:amd64 (1.12-1) ...
+Selecting previously unselected package libx11-data.
+Preparing to unpack .../21-libx11-data_2%3a1.6.4-3+deb9u1_all.deb ...
+Unpacking libx11-data (2:1.6.4-3+deb9u1) ...
+Selecting previously unselected package libx11-6:amd64.
+Preparing to unpack .../22-libx11-6_2%3a1.6.4-3+deb9u1_amd64.deb ...
+Unpacking libx11-6:amd64 (2:1.6.4-3+deb9u1) ...
+Selecting previously unselected package libxpm4:amd64.
+Preparing to unpack .../23-libxpm4_1%3a3.5.12-1_amd64.deb ...
+Unpacking libxpm4:amd64 (1:3.5.12-1) ...
+Selecting previously unselected package libgd3:amd64.
+Preparing to unpack .../24-libgd3_2.2.4-2+deb9u5_amd64.deb ...
+Unpacking libgd3:amd64 (2.2.4-2+deb9u5) ...
+Selecting previously unselected package libgeoip1:amd64.
+Preparing to unpack .../25-libgeoip1_1.6.9-4_amd64.deb ...
+Unpacking libgeoip1:amd64 (1.6.9-4) ...
+Selecting previously unselected package libxslt1.1:amd64.
+Preparing to unpack .../26-libxslt1.1_1.1.29-2.1+deb9u2_amd64.deb ...
+Unpacking libxslt1.1:amd64 (1.1.29-2.1+deb9u2) ...
+Selecting previously unselected package nginx.
+Preparing to unpack .../27-nginx_1.13.6-1~stretch_amd64.deb ...
+----------------------------------------------------------------------
+
+Thanks for using nginx!
+
+Please find the official documentation for nginx here:
+* http://nginx.org/en/docs/
+
+Please subscribe to nginx-announce mailing list to get
+the most important news about nginx:
+* http://nginx.org/en/support.html
+
+Commercial subscriptions for nginx are available on:
+* http://nginx.com/products/
+
+----------------------------------------------------------------------
+Unpacking nginx (1.13.6-1~stretch) ...
+Selecting previously unselected package nginx-module-geoip.
+Preparing to unpack .../28-nginx-module-geoip_1.13.6-1~stretch_amd64.deb ...
+Unpacking nginx-module-geoip (1.13.6-1~stretch) ...
+Selecting previously unselected package nginx-module-image-filter.
+Preparing to unpack .../29-nginx-module-image-filter_1.13.6-1~stretch_amd64.deb ...
+Unpacking nginx-module-image-filter (1.13.6-1~stretch) ...
+Selecting previously unselected package nginx-module-njs.
+Preparing to unpack .../30-nginx-module-njs_1.13.6.0.1.14-1~stretch_amd64.deb ...
+Unpacking nginx-module-njs (1.13.6.0.1.14-1~stretch) ...
+Selecting previously unselected package nginx-module-xslt.
+Preparing to unpack .../31-nginx-module-xslt_1.13.6-1~stretch_amd64.deb ...
+Unpacking nginx-module-xslt (1.13.6-1~stretch) ...
+Setting up libncurses5:amd64 (6.0+20161126-1+deb9u2) ...
+Setting up libexpat1:amd64 (2.2.0-2+deb9u3) ...
+Setting up libjpeg62-turbo:amd64 (1:1.5.1-2) ...
+Setting up libpng16-16:amd64 (1.6.28-1+deb9u1) ...
+Setting up libjbig0:amd64 (2.1-3.1+b2) ...
+Setting up fonts-dejavu-core (2.37-1) ...
+Setting up libtiff5:amd64 (4.0.8-2+deb9u4) ...
+Setting up gettext-base (0.19.8.1-2+deb9u1) ...
+Setting up libgeoip1:amd64 (1.6.9-4) ...
+Setting up libicu57:amd64 (57.1-6+deb9u3) ...
+Setting up libbsd0:amd64 (0.8.3-1) ...
+Setting up ucf (3.0036) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.24.1 /usr/local/share/perl/5.24.1 /usr/lib/x86_64-linux-gnu/perl5/5.24 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.24 /usr/share/perl/5.24 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base .) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+debconf: falling back to frontend: Teletype
+Setting up libxml2:amd64 (2.9.4+dfsg1-2.2+deb9u2) ...
+Setting up libfreetype6:amd64 (2.6.3-3.2+deb9u1) ...
+Setting up libxslt1.1:amd64 (1.1.29-2.1+deb9u2) ...
+Processing triggers for libc-bin (2.24-11+deb9u4) ...
+Setting up libssl1.1:amd64 (1.1.0l-1~deb9u1) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.24.1 /usr/local/share/perl/5.24.1 /usr/lib/x86_64-linux-gnu/perl5/5.24 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.24 /usr/share/perl/5.24 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base .) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+debconf: falling back to frontend: Teletype
+Setting up libxdmcp6:amd64 (1:1.1.2-3) ...
+Setting up libx11-data (2:1.6.4-3+deb9u1) ...
+Setting up libxau6:amd64 (1:1.0.8-1) ...
+Setting up libwebp6:amd64 (0.5.2-1) ...
+Setting up libedit2:amd64 (3.1-20160903-3) ...
+Setting up fontconfig-config (2.11.0-6.7) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.24.1 /usr/local/share/perl/5.24.1 /usr/lib/x86_64-linux-gnu/perl5/5.24 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.24 /usr/share/perl/5.24 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base .) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+debconf: falling back to frontend: Teletype
+Setting up nginx (1.13.6-1~stretch) ...
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Setting up nginx-module-xslt (1.13.6-1~stretch) ...
+----------------------------------------------------------------------
+
+The xslt dynamic module for nginx has been installed.
+To enable this module, add the following to /etc/nginx/nginx.conf
+and reload nginx:
+
+    load_module modules/ngx_http_xslt_filter_module.so;
+
+Please refer to the module documentation for further details:
+http://nginx.org/en/docs/http/ngx_http_xslt_module.html
+
+----------------------------------------------------------------------
+Setting up libxcb1:amd64 (1.12-1) ...
+Setting up libfontconfig1:amd64 (2.11.0-6.7+b1) ...
+Setting up nginx-module-njs (1.13.6.0.1.14-1~stretch) ...
+----------------------------------------------------------------------
+
+The nginScript dynamic modules for nginx have been installed.
+To enable these modules, add the following to /etc/nginx/nginx.conf
+and reload nginx:
+
+    load_module modules/ngx_http_js_module.so;
+    load_module modules/ngx_stream_js_module.so;
+
+Please refer to the modules documentation for further details:
+http://nginx.org/en/docs/njs_about.html
+http://nginx.org/en/docs/http/ngx_http_js_module.html
+http://nginx.org/en/docs/stream/ngx_stream_js_module.html
+
+----------------------------------------------------------------------
+Setting up libx11-6:amd64 (2:1.6.4-3+deb9u1) ...
+Setting up nginx-module-geoip (1.13.6-1~stretch) ...
+----------------------------------------------------------------------
+
+The GeoIP dynamic modules for nginx have been installed.
+To enable these modules, add the following to /etc/nginx/nginx.conf
+and reload nginx:
+
+    load_module modules/ngx_http_geoip_module.so;
+    load_module modules/ngx_stream_geoip_module.so;
+
+Please refer to the modules documentation for further details:
+http://nginx.org/en/docs/http/ngx_http_geoip_module.html
+http://nginx.org/en/docs/stream/ngx_stream_geoip_module.html
+
+----------------------------------------------------------------------
+Setting up libxpm4:amd64 (1:3.5.12-1) ...
+Setting up libgd3:amd64 (2.2.4-2+deb9u5) ...
+Setting up nginx-module-image-filter (1.13.6-1~stretch) ...
+----------------------------------------------------------------------
+
+The image filter dynamic module for nginx has been installed.
+To enable this module, add the following to /etc/nginx/nginx.conf
+and reload nginx:
+
+    load_module modules/ngx_http_image_filter_module.so;
+
+Please refer to the module documentation for further details:
+http://nginx.org/en/docs/http/ngx_http_image_filter_module.html
+
+----------------------------------------------------------------------
+Processing triggers for libc-bin (2.24-11+deb9u4) ...
+Removing intermediate container 3f12285b9f14
+ ---> 61b31d825a22
+Step 5/7 : RUN ln -sf /dev/stdout /var/log/nginx/access.log 	&& ln -sf /dev/stderr /var/log/nginx/error.log
+ ---> Running in d72da4a00bcc
+Removing intermediate container d72da4a00bcc
+ ---> cd39d820a9f9
+Step 6/7 : EXPOSE 80 443
+ ---> Running in f6d246d6b256
+Removing intermediate container f6d246d6b256
+ ---> 2c1855d83b04
+Step 7/7 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Running in b1c3d415aa85
+Removing intermediate container b1c3d415aa85
+ ---> b71c8c804777
+Successfully built b71c8c804777
+Successfully tagged customnginx:latest
+```
+
+
 
 ```
 Koitaro@MacBook-Pro-3 udemy-docker-mastery % cd dockerfile-sample-1
@@ -392,6 +813,41 @@ Step 7/7 : CMD ["nginx", "-g", "daemon off;"]
 Successfully built ebfa91266979
 Successfully tagged customnginx:latest
 ```
+## Building the same Image: super quick because everything built already once
+```
+Koitaro@MacBook-Pro-3 dockerfile-sample-1 % docker image build -t customnginx .
+Sending build context to Docker daemon   29.7kB
+Step 1/7 : FROM debian:stretch-slim
+ ---> fa41698012c7
+Step 2/7 : ENV NGINX_VERSION 1.13.6-1~stretch
+ ---> Using cache
+ ---> cf9a9e06cc60
+Step 3/7 : ENV NJS_VERSION   1.13.6.0.1.14-1~stretch
+ ---> Using cache
+ ---> 19be3e10f2c3
+Step 4/7 : RUN apt-get update 	&& apt-get install --no-install-recommends --no-install-suggests -y gnupg1 	&& 	NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; 	found=''; 	for server in 	ha.pool.sks-keyservers.net 		hkp://keyserver.ubuntu.com:80 		hkp://p80.pool.sks-keyservers.net:80 		pgp.mit.edu 	; do 		echo "Fetching GPG key $NGINX_GPGKEY from $server"; 		apt-key adv --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$NGINX_GPGKEY" && found=yes && break; 	done; 	test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; 	apt-get remove --purge -y gnupg1 && apt-get -y --purge autoremove && rm -rf /var/lib/apt/lists/* 	&& echo "deb http://nginx.org/packages/mainline/debian/ stretch nginx" >> /etc/apt/sources.list 	&& apt-get update 	&& apt-get install --no-install-recommends --no-install-suggests -y 						nginx=${NGINX_VERSION} 					nginx-module-xslt=${NGINX_VERSION} 						nginx-module-geoip=${NGINX_VERSION} 						nginx-module-image-filter=${NGINX_VERSION} 	nginx-module-njs=${NJS_VERSION} 						gettext-base 	&& rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> 61b31d825a22
+Step 5/7 : RUN ln -sf /dev/stdout /var/log/nginx/access.log 	&& ln -sf /dev/stderr /var/log/nginx/error.log
+ ---> Using cache
+ ---> cd39d820a9f9
+Step 6/7 : EXPOSE 80 443
+ ---> Using cache
+ ---> 2c1855d83b04
+Step 7/7 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Using cache
+ ---> b71c8c804777
+Successfully built b71c8c804777
+Successfully tagged customnginx:latest
+Koitaro@MacBook-Pro-3 dockerfile-sample-1 % ls -alF
+total 56
+drwxr-xr-x   5 Koitaro  staff    160 May 21 21:28 ./
+drwxr-xr-x  36 Koitaro  staff   1152 May 14 15:38 ../
+-rw-r--r--   1 Koitaro  staff  12288 May 21 21:29 .Dockerfile.swo
+-rw-r--r--   1 Koitaro  staff  12288 May 15 18:13 .Dockerfile.swp
+-rw-r--r--@  1 Koitaro  staff   2471 May 21 21:09 Dockerfile
+```
+
 # Question: Which of the following is an example of a container image? Linux, docker hub, container.jpg, nginx
 ## Answer: nginx
 # Question: Which flag would you pass to specify a docker build referencing a file other than the default 'Dockerfile'?
