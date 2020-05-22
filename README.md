@@ -970,4 +970,8 @@ The -f command is used to specify a dockerfile, with an alias of --file
 ## Answer: WORKDIR
 This is to change the current working directory in Dockerfiles.
 
+# Build Your Own Image
+![build_your_own_image](https://github.com/NoriKaneshige/Docker_Container_Images/blob/master/build_your_own_image.png)
+```
 
+```
