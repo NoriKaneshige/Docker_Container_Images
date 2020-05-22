@@ -814,6 +814,7 @@ Successfully built ebfa91266979
 Successfully tagged customnginx:latest
 ```
 ## Building the same Image: super quick because everything built already once
+## Notice that it's using cache
 ```
 Koitaro@MacBook-Pro-3 dockerfile-sample-1 % docker image build -t customnginx .
 Sending build context to Docker daemon   29.7kB
