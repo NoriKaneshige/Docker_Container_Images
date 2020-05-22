@@ -1217,3 +1217,12 @@ testnode                          latest              6db78297cc20        46 min
 norinori400/testing-node          latest              6db78297cc20        46 minutes ago      64.5MB
 nginx-with-html                   latest              31df27b07b71        12 hours ago        127MB
 ```
+## Let's remove the image, norinori400/testing-node, and run new container by downloading norinori400/testing-node from docker hub
+```
+Koitaro@MacBook-Pro-3 dockerfile-assignment-1 % docker image rm norinori400/testing-node
+Untagged: norinori400/testing-node:latest
+Untagged: norinori400/testing-node@sha256:0781b843fc0aef3b449faa8aefbbe770acf677b7d838f4363490b590029e1e61
+
+
+
+```
