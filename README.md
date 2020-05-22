@@ -1234,4 +1234,4 @@ GET / 304 136.277 ms - -
 GET /images/picard.gif 304 3.095 ms - -
 GET /stylesheets/style.css 304 11.713 ms - -
 ```
-![running-container-with-downloade](running-container-with-downloade.gif)
+![run-a-container-with-downloading_an_image](run-a-container-with-downloading_an_image.gif)
